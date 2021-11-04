@@ -1,28 +1,25 @@
 [TOC]
 # 为啥使用CMake？
-If you have ever maintained the build and installation process for a software package, you will be interested in CMake. CMake is an open-source build system generator for software projects that allows developers to specify build parameters in a simple, portable, text file format. This file is then used by CMake to generate project files for native build tools including Integrated Development Environments (IDEs) such as Microsoft Visual Studio or Apple’s Xcode, as well as UNIX, Linux, NMake, and Ninja. CMake handles the difficult aspects of building software such as cross-platform builds, system introspection, and user customized builds, in a simple manner that allows users to easily tailor builds for complex hardware and software systems.
 
-For any project, and especially cross-platform projects, there is a need for a unified build system. Many non CMake-based projects ship with both a UNIX Makefile (or Makefile.in) and a Microsoft Visual Studio workspace. This requires that developers constantly try to keep both build systems up-to-date and consistent with each other. To target additional build systems, such as Xcode, requires even more custom copies of these files, creating an even bigger problem. This problem is compounded if you try to support optional components, such as including JPEG support if libjpeg is available on the system. CMake solves this by consolidating these different operations into one simple, easy-to-understand file format.
+如果您曾经维护过软件包的构建和发布流程， 您将会对CMake感兴趣。CMake是一个开源的软件项目构建系统生成器，它允许开发人员通过简单、便携的文本文件格式指定构建参数。然后CMake使用这个文件为原生的构建工具生成项目文件，包括例如微软Visual Studio和苹果XCode这样的集成开发工具，同样也包括Unix、Linux Make和Ninja。Cmake以一种简单的方式处理构建软件的难点，例如跨平台构建，系统感知以及用户自定义构建，使得用户可以简单方便的定制复杂硬件和软件系统的构建。
 
-If you have multiple developers working on a project, or multiple target platforms, then the software will have to be built on more than one computer. Given the wide range of installed software and custom options that are involved with setting up a modern computer, the chances are that two computers running the same OS will be slightly different. CMake provides many benefits for single platform, multi-machine development environments including:
+对于任意项目，特别是跨平台项目，都有统一构建系统的需求。许多非基于CMake的项目都附带了Unix的Makefile（或者Makefile.in）和微软Visual Studio工程文件。这需要开发者不断去尝试保持这两种系统最新和一致。要针对其他的构建系统，如XCode，需要这些文件的更多副本，带来更大的问题如果你尝试支持可选模块，比如在libjpeg可用的系统上支持JPEG，那么问题会更加复杂。CMake通过将这些不同的操作整合到一个简单易懂的文件格式的方法解决了这个问题。
 
-- The ability to automatically search for programs, libraries, and header files that may be required by the software being built. This includes the ability to consider environment variables and Window’s registry settings when searching.
-- The ability to build in a directory tree outside of the source tree. This is a useful feature found on many UNIX platforms; CMake provides this feature on Windows as well. This allows a developer to remove an entire build directory without fear of removing source files.
-- The ability to create complex, custom commands for automatically generated files such as Qt’s moc() or SWIG wrapper generators. These commands are used to generate new source files during the build process that are in turn compiled into the software.
-- The ability to select optional components at configuration time. For example, several of VTK’s libraries are optional, and CMake provides an easy way for users to select which libraries are built.
-- The ability to automatically generate workspaces and projects from a simple text file. This can be very handy for systems that have many programs or test cases, each of which requires a separate project file, typically a tedious manual process to create using an IDE.
-- The ability to easily switch between static and shared builds. CMake knows how to create shared libraries and modules on all platforms supported. Complicated platform-specific linker flags are handled, and advanced features like built-in run time search paths for shared libraries are supported on many UNIX systems.
-- Automatic generation of file dependencies and support for parallel builds on most platforms.
+如果你有多位开发者在一个项目或者多个目标平台上工作，那么软件需要在多个计算机上构建。鉴于现代计算机各种安装软件和自定义的选项，两台相同操作系统的计算机会有一些不同。CMake为这种单平台多机开发环境提供了许多便利，这包括：
+
+- 自动搜索当前构建软件需要的程序、库和头文件的能力，这包括在搜索时考虑到系统变量、Windows注册表设置的能力。
+- 在源码树外构建的能力。这是很多Unix系统上很有用的功能。CMake也为Windows系统上提供了该功能。这允许开发者直接删掉整个构建目录而不用去担心会误删除那些源文件。
+- 创建复杂的、自定义命令用于自动生成文件的能力，比如Qt中的moc()以及SWIG包装生成器。这些命令在构建过程中生成新的源文件，这些源文件在随后的过程中被被编译进软件。
+- 在配置时选择可选项的能力。比如，VTK有一些库是可选的，CMake为用户提供了一种简单的方式选择哪些库需要构建。
+- 通过简单的文本文件创建工作空间和项目的能力。对于具有许多程序和测试项目的系统来说，这非常方便。每个项目都需要一个单独的项目文件，这是一个繁琐的流程，之前都是通过IDE手动创建。
+- 在静态构建和动态构建间轻松切换的能力。CMake知道如何在所支持的凭他上构建动态库和模块。CMake能够处理复杂的平台相关的链接标志，一些高级功能例如为共享库搜索内置运行时路径的能力也在许多Unix凭他上得到了支持。
 - 自动生成文件依赖，以及在大多数平台上提供并行构建的支持。
 
-When developing cross-platform software, CMake provides a number of additional features:
 在开发跨平台软件时，CMake提供了许多附加的功能：
-
 - 测试机器字节序和其他特定硬件特性的能力。
 - 一组编译配置文件可以适用于所有的平台。这避免开发者必须在项目内部以多种不同格式维护相同的信息的问题。
 - 支持在它所支持的所有的平台上编译共享库。
 - 使用系统相关信息配置文件的能力，例如数据文件的路径和其他信息。CMake可以创建头文件，其中包含以#define 宏形式包含例如数据文件路径以及其他信息。系统特定的标志也可以放在配置头文件中，这比通过命令行-D选型有优势。因为它允许其他构建系统使用CMake构建的库，而无需构建期间使用完全相同的命令行选项。
-
 
 # CMake的历史
 从1999年以来，CMake一直在活跃的开发中，并且已经成熟到成为一系列建问题的解决方案。CMake的开发是作为由美国国家医学图书馆资助的ITK（Insight Toolkit）项目的一部分开始的，ITK是一个大型软件项目，运行在许多平台，且与许多其他软件包进行交互。为了支持这一点，需要一个功能强大且易于使用的构建工具。有在大型项目中使用过构建系统经验的开发者，设计了CMake来满足这些需求。从那时起，Cmake越来越受欢迎，因为它易于使用和灵活，许多项目和开发者都采用它。最有说服力的日子是K桌面环境项目KDE成功使用CMake作为构建系统。KDE可以说是现存的最大的开源软件项目。
