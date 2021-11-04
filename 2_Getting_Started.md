@@ -1,10 +1,18 @@
 [TOC]
-# 
+# 获取和安装CMake
 Before using CMake, you will need to install or build the CMake binaries on your system. On many systems, you may find that CMake is already installed or is available for installation with the standard package manager tool for the system. Cygwin, Debian, FreeBSD, OS X MacPorts, Mac OS X Fink, and many others all have CMake distributions.
+
+在使用CMake之前，你可能需要在系统上安装或者构建CMake的二进制文件。在许多系统上，你可能会发现CMake已经安装好了或者可以通过系统的标准包管理器安装。Cygwin，Debian，FreeBSD，OS X， MacPorts, Mac OS X Find， 以及许多其他的系统都有CMake的发布版本。
+
+
 
 If your system does not have a CMake package, you can find CMake precompiled for many common architectures on the CMake Download page. Select the desired release and follow the download instructions. CMake may be installed to any directory, so root privileges are not required for installation.
 
+如果你的系统没有CMake的安装包，你可以在CMake的下载页面找到很多常见架构的预编译文件。选择所需的版本，并按照下载说明进行操作。CMake可以安装到任意目录，因此安装时不需要root权限。
+
 If you do not find precompiled binaries for your system, then you can build CMake from source. To build CMake, you will need a modern C++ compiler and the source distribution from the CMake Download page or Kitware’s GitLab instance. To build CMake, follow the instructions in Readme.txt at the top of the source tree.
+
+如果您没有找到您系统的预编译二进制文件，那么您可以从源代码开始构建CMake。为了构建CMake，您需要一个现代C++编译器和从CMake下载页面或者KitWare的Gitlab获得的源码版本。请按照源码目录顶层的ReadMe.txt中的步骤操作。
 # Directory Structure
 There are two main directories CMake uses when building a project: the source directory and the binary directory. The source directory is where the source code for the project is located. This is also where the CMakeLists files will be found. The binary directory is sometimes referred to as the build directory and is where CMake will put the resulting object files, libraries, and executables. CMake will not write any files to the source directory, only to the binary directory.
 
