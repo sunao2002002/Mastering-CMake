@@ -1,23 +1,44 @@
 # Writing CMakeLists Files
 This chapter will cover the basics of writing effective CMakeLists files for your software. It will cover the basic commands and issues you will need to handle most projects. While CMake can handle extremely complex projects, for most projects you will find this chapter’s contents will tell you all you need to know. CMake is driven by the CMakeLists.txt files written for a software project. The CMakeLists files determine everything from which options to present to users, to which source files to compile. In addition to discussing how to write a CMakeLists file, this chapter will also cover how to make them robust and maintainable.
 
+本章将讲述为您的软件编写有效的CMakeLists文件的基础知识。它将会覆盖处理大多数工程所需要的基命令和问题。尽管CMake可以处理及其复杂的项目，但对于大多数项目，您会发现本章将提供所有您说需要的内容。CMake由为软件编写的CMakeLists文件驱动。CMakeLists文件决定了从向用户展示那些选项到编译源文件在内的所有内容。除了讨论如何编写CMakeLists文件外，本章还将介绍如何使他们变得健壮和可维护。
+
 ## Editing CMakeLists Files
 CMakeLists files can be edited in almost any text editor. Some editors, such as Notepad++, come with CMake syntax highlighting and indentation support built-in. For editors such as Emacs or Vim, CMake includes indentation and syntax highlighting modes. These can be found in the Auxiliary directory of the source distribution, or downloaded from the CMake Download page.
 
+CMakeLists文件可以由大多数编辑器编辑。一些编辑器如Notepad++带有CMake语法高亮和缩进支持。对于Emacs或者Vim这类编辑器，CMake包括缩进和语法高亮模式。这些可以在与源码发布的Auxiliary目录中找到，或者从CMake下载页面下载。
+
 Within any of the supported generators (Makefiles, Visual Studio, etc.), if you edit a CMakeLists file and rebuild, there are rules that will automatically invoke CMake to update the generated files (e.g. Makefiles or project files) as required. This helps to assure that your generated files are always in sync with your CMakeLists files.
+
+
+
+对于CMake支持的生成器（如Makefile,VisualStudio等），如果您编辑了CMakeLists并重建，有一些规则会自动调用CMake来更新所生成的文件（如Makefiles或者项目文件），这个有助于保证您生成的文件始终与您的CMakeLists文件同步。
+
 ## CMake Language
 The CMake language is composed of comments, commands, and variables.
 
+CMake语言由注释、命令和变量构成。
+
 ## Comments
 Comments start with # and run to the end of the line. See the cmake-language manual for more details.
+
+注释由#开头，并且包含到行尾，参考cmake-language手册获取更详细信息。
+
 ## Variables
 CMakeLists files use variables much like any programming language. CMake variable names are case sensitive and may only contain alphanumeric characters and underscores.
 
+CMakeLists文件和其他编程语言一样使用变量。CMake中变量名是大小写敏感的，只包含字符和下划线。
+
 A number of useful variables are automatically defined by CMake and are discussed in the cmake-variables manual. These variables begin with CMAKE_. Avoid this naming convention (and, ideally, establish your own) for variables specific to your project.
 
+CMake中自动定义了一些有用的变量，可以参考cmake-varialbes手册。这些变量以CMAKE_开头。避免在您的工程中使用CMAKE_这样的变量命名方式，最好定义自己的方式。
+
 All CMake variables are stored internally as strings although they may sometimes be interpreted as other types.
+所有的CMake变量在内部都是已字符串的方式存储，虽然他们有时被解释为其他类型。
 
 Use the set command to set variable values. In its simplest form, the first argument to set is the name of the variable and the rest of the arguments are the values. Multiple value arguments are packed into a semicolon-separated list and stored in the variable as a string. For example:
+使用set命令设置变量的值。最简单的格式，第一个参数是变量名称，其他参数是变量的值。多个值参数被打包成以分号分隔的列表，以字符串方式存储。例如：
+
 
 ```
 set(Foo "")      # 1 quoted arg -> value is ""
@@ -25,7 +46,12 @@ set(Foo a)       # 1 unquoted arg -> value is "a"
 set(Foo "a b c") # 1 quoted arg -> value is "a b c"
 set(Foo a b c)   # 3 unquoted args -> value is "a;b;c"
 ```
+
 Variables may be referenced in command arguments using syntax ${VAR} where VAR is the variable name. If the named variable is not defined, the reference is replaced with an empty string; otherwise it is replaced by the value of the variable. Replacement is performed prior to the expansion of unquoted arguments, so variable values containing semicolons are split into zero-or-more arguments in place of the original unquoted argument. For example:
+
+变量可以作为命令的参数，以“${VAR}”方式引用， 其中“VAR”为变量名。如果指定的变量未被定义，那么该引用会被一个空字符串代替，否则会被变量的值替换。这个替换实在引号变量展开前进行的，因此那些带有分号的变量会被分割成0个或多个不带引号的变量，取代之前的位置，例如：
+
+
 ```
 set(Foo a b c)    # 3 unquoted args -> value is "a;b;c"
 command(${Foo})   # unquoted arg replaced by a;b;c
@@ -36,9 +62,16 @@ command(${Foo})   # unquoted arg replaced by empty string
                   # and expands to zero arguments
 command("${Foo}") # quoted arg value is empty string
 ```
+
+
 System environment variables and Windows registry values can be accessed directly in CMake. To access system environment variables, use the syntax $ENV{VAR}. CMake can also reference registry entries in many commands using a syntax of the form [HKEY_CURRENT_USER\\Software\\path1\\path2;key], where the paths are built from the registry tree and key.
+
+在CMake中可以直接访问系统变量和Windows注册表值。使用“$ENV{VAR}”方式访问系统环境变量。CMake也可以使用“[HKEY_CURRENT_USER\\Software\\path1\\path2;key]”的方式访问注册表，path和Key由注册表path和Key构成。
+
 ### Variables Scope
+
 Variables in CMake have a scope that is a little different from most languages. When you set a variable, it is visible to the current CMakeLists file or function and any subdirectory’s CMakeLists files, any functions or macros that are invoked, and any files that are included using the include command. When a new subdirectory is processed (or a function called), a new variable scope is created and initialized with the current value of all variables in the calling scope. Any new variables created in the child scope, or changes made to existing variables, will not impact the parent scope. Consider the following example:
+CMake中的变量作用类型和大多数语言都有一些不一样。如果设置了一个变量，那么他对当前CMakeLists文件或者函数， 子目录的CMakeLists文件，或者任意调用的函数和宏，以及任何通过include命令包含进来的文件都是可见的。但一个新的目录被处理或者函数被调用，一个新的变量域被创建，并以所有变量当前的值看哦买吃哦买和初始化。子作用域中新创建的变量以及对现有变量的值的修改对父作用域都是不可见的。思考下面的例子：
 ```
 function(foo)
   message(${test}) # test is 1 here
@@ -50,8 +83,9 @@ set(test 1)
 foo()
 message(${test}) # test will still be 1 here
 ```
-In some cases, you might want a function or subdirectory to set a variable in its parent’s scope. There is a way for CMake to return a value from a function, and it can be done by using the PARENT_SCOPE option with the set command. We can modify the prior example so that the function foo changes the value of test in its parent’s scope as follows:
 
+In some cases, you might want a function or subdirectory to set a variable in its parent’s scope. There is a way for CMake to return a value from a function, and it can be done by using the PARENT_SCOPE option with the set command. We can modify the prior example so that the function foo changes the value of test in its parent’s scope as follows:
+一些情况下，您可能需要一个函数或者子目录在父作用域中设置一个变量。
 ```
 function(foo)
   message(${test}) # test is 1 here
@@ -63,6 +97,7 @@ set(test 1)
 foo()
 message(${test}) # test will now be 2 here
 ```
+
 Variables in CMake are defined in the order of the execution of set commands.
 
 Consider the following example:
@@ -182,7 +217,7 @@ endwhile()
 ```
 ### Procedure Definitions
 
-The macro and function commands support repetitive tasks that may be scattered throughout your CMakeLists files. Once a macro or function is defined, it can be used by any CMakeLists files processed after its definition.
+The macro and  function commands support repetitive tasks that may be scattered throughout your CMakeLists files. Once a macro or function is defined, it can be used by any CMakeLists files processed after its definition.
 
 A function in CMake is very much like a function in C or C++. You can pass arguments into it, and they become variables within the function. Likewise, some standard variables such as ARGC, ARGV, ARGN, and ARGV0, ARGV1, etc. are defined. Function calls have a dynamic scope. Within a function you are in a new variable scope; this is like how you drop into a subdirectory using the add_subdirectory command and are in a new variable scope. All the variables that were defined when the function was called remain defined, but any changes to variables or new variables only exist within the function. When the function returns, those variables will go away. Put more simply: when you invoke a function, a new variable scope is pushed; when it returns, that variable scope is popped.
 
@@ -249,3 +284,4 @@ There are a few commands that can be very useful, but are not typically used in 
 First, consider the add_dependencies command which creates a dependency between two targets. CMake automatically creates dependencies between targets when it can determine them. For example, CMake will automatically create a dependency for an executable target that depends on a library target. The add_dependencies command command is typically used to specify inter-target dependencies between targets where at least one of the targets is a custom target (see Add Custom Command section).
 
 The include_regular_expression command also relates to dependencies. This command controls the regular expression that is used for tracing source code dependencies. By default, CMake will trace all the dependencies for a source file including system files such as stdio.h. If you specify a regular expression with the include_regular_expression command, that regular expression will be used to limit which include files are processed. For example; if your software project’s include files all started with the prefix foo (e.g. fooMain.c fooStruct.h, etc), you could specify a regular expression of ^foo.*$ to limit the dependency checking to just the files of your project.
+
