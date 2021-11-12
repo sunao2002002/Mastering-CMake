@@ -50,9 +50,9 @@ The CMakeLists files (actually CMakeLists.txt but it is common to leave off the 
 
 CMakeLists文件（实际上是CMakeLists.txt文件，但我们常常省略后缀）是纯文本文件，包含了使用CMake语言描述的工程信息。CMMake语言由一系列注释、命令和变量构成。您可能会好奇为啥CMake不使用已有的语言例如Python，Java或者Tcl，而是自定义的语言。主要原因在于CMake的开发者不希望CMake依赖其他工具。如果使用其他语言，CMake的使用者需要安装那种语言，潜在的需要那种语言的特殊版本。处于性能和功能方面的原因，需要在语言扩展之上做一些CMake的工作。
 
-## Hello World for CMake
+##  CMake的Hello World
 To begin, let us consider the simplest possible CMakeLists file. To compile an executable from one source file, the CMakeLists file would contain three lines:
-
+让我们从一个最简单的CMakeLists文件开始。从单个源码文件生成可执行文件，CMakelists文件仅仅需要包含3行：
 ```
 cmake_minimum_required(VERSION 3.20)
 project(Hello)
@@ -61,7 +61,10 @@ add_executable(Hello Hello.c)
 
 The first line of the top level CMakeLists file should always be cmake_minimum_required. This allows projects to require a given version of CMake and, in addition, allows CMake to be backwards compatible.
 
+顶层CMakeLists文件的第一行必须总是cmake_minimum_required.这允许工程需要一个特定版本的CMake，另外也允许CMake向后兼容。
+
 The next line of any top level CMakeLists file should be the project command. This command sets the name of the project and may specify other options such as language or version.
+顶层CMakelists文件接下来是project命令。这个命令设置了项目的名字，也可以指定项目的其他参数，如语言，或者版本号。
 
 For each directory in a project where the CMakeLists.txt file invokes the project command, CMake generates a top-level Makefile or IDE project file. The project will contain all targets that are in the CMakeLists.txt file and any subdirectories, as specified by the add_subdirectory command. If the EXCLUDE_FROM_ALL option is used in the add_subdirectory command, the generated project will not appear in the top-level Makefile or IDE project file; this is useful for generating sub-projects that do not make sense as part of the main build process. Consider that a project with a number of examples could use this feature to generate the build files for each example with one run of CMake, but not have the examples built as part of the normal build process.
 
@@ -70,10 +73,10 @@ Finally, use the add_executable command to add an executable to the project usin
 In this example, there are two files in the source directory: CMakeLists.txt and Hello.c.
 
 The next sections will describe how to configure and build the project using the CMake GUI and command line interfaces.
-# Configure and Generate
+# 配置和生成
 After a CMakeLists file has been created, CMake processes the text file and creates entries in a cache file. Users may edit the CMakeLists file or specify cache values with the CMake gui or ccmake and re-configure. Next, CMake uses the cache entries to generate a project in the user’s desired build system (e.g. Makefile or Visual Studio solution).
 
-## Running the CMake GUI
+## 运行CMake GUI
 CMake includes a Qt-based user interface that can be used on most platforms, including UNIX, Mac OS X, and Windows. The cmake-gui is included in the CMake source code, but you will need an installation of Qt on your system in order to build it.
 
 ![Figure1:Qt based CMake GUI](./res/fig1.png)
@@ -83,16 +86,16 @@ On most UNIX platforms, if the curses library is supported, CMake provides an ex
 ![Figure2:ccmake running on Unix](./res/fig2.png)
 
 Brief instructions are displayed in the bottom of the window. If you hit the “c” key, it will configure the project. You should always configure after changing values in the cache. To change values, use the arrow keys to select cache entries, and hit the enter key to edit them. Boolean values will toggle with the enter key. Once you have set all the values as you like, you can hit the “g” key to generate the Makefiles and exit. You can also hit “h” for help, “q” to quit, and “t” to toggle the viewing of advanced cache entries.
-## Running CMake from the Command Line
+## 从命令行运行CMake
 From the command line, the cmake executable can be used to generate a project buildsystem. This is best suited for projects with few or no options. For larger projects like VTK, using ccmake, or the cmake-gui is recommended. To build a project with cmake, first create and change directory to where you want the binaries to be placed. Run cmake specifying the path to the source tree and pass in any options using the -D flag. Unlike ccmake, or the cmake-gui, the configure and generate steps are combined into one when using the cmake executable.
-## Specifying the Compiler to CMake
+## 为CMake指定编译器
 
 On some systems, you may have more than one compiler to choose from or your compiler may be in a non-standard place. In these cases, you will need to specify to CMake where your desired compiler is located. There are three ways to specify this: the generator can specify the compiler; an environment variable can be set; or a cache entry can be set. Some generators are tied to a specific compiler; for example, the Visual Studio 19 generator always uses the Microsoft Visual Studio 19 compiler. For Makefile-based generators, CMake will try a list of usual compilers until it finds a working one.
 
 The lists can be preempted with environment variables that can be set before CMake is run. The CC environment variable specifies the C compiler, while CXX specifies the C++ compiler. You can specify the compilers directly on the command line by using -DCMAKE_CXX_COMPILER=cl for example. Once cmake has been run and picked a compiler, if you wish to change the compiler, start over with an empty binary directory.
 
 The flags for the compiler and the linker can also be changed by setting environment variables. Setting LDFLAGS will initialize the cache values for link flags, while CXXFLAGS and CFLAGS will initialize CMAKE_CXX_FLAGS and CMAKE_C_FLAGS respectively.
-## Build Configurations
+## 构建配置
 Build configurations allow a project to be built in different ways for debug, optimized, or any other special set of flags. CMake supports, by default, Debug, Release, MinSizeRel, and RelWithDebInfo configurations. Debug has the basic debug flags turned on. Release has the basic optimizations turned on. MinSizeRel has flags that produce the smallest object code, but not necessarily the fastest code. RelWithDebInfo builds an optimized build with debug information as well.
 
 CMake handles the configurations in slightly different ways depending on the generator being used. The conventions of the native build system are followed when possible. This means that configurations impact the build in different ways when using Makefiles versus using Visual Studio project files.
